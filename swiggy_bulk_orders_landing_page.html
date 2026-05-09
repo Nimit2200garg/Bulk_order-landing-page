@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swiggy Bulk Orders</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    /* Swiggy exact brand colors */
+    --swiggy-orange:   #FC8019;
+    --swiggy-orange-d: #E8701A;
+    --swiggy-orange-l: #FFF3EA;
+    --swiggy-orange-m: #FDEBD8;
+    --swiggy-white:    #FFFFFF;
+    --swiggy-bg:       #F2F2F7;   /* Swiggy app light bg */
+    --swiggy-dark:     #1C1C1C;   /* near-black used in app */
+    --swiggy-grey:     #686B78;   /* secondary text */
+    --swiggy-grey-l:   #93959F;   /* hint text */
+    --swiggy-border:   #E9E9EB;
+    --swiggy-green:    #60B246;   /* veg indicator green */
+  }
+
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: var(--swiggy-white);
+    color: var(--swiggy-dark);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--swiggy-white);
+    border-bottom: 1px solid var(--swiggy-border);
+    display: flex; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .nav-inner {
+    max-width: 1100px; width: 100%;
+    padding: 0 32px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Nunito', sans-serif;
+    font-size: 26px; font-weight: 900;
+    color: var(--swiggy-orange);
+    letter-spacing: -0.5px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav-logo-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--swiggy-orange);
+    margin-left: 2px; margin-bottom: 14px;
+  }
+  .nav-pill {
+    background: var(--swiggy-orange-l);
+    color: var(--swiggy-orange);
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px; font-weight: 800;
+    padding: 4px 14px; border-radius: 50px;
+    border: 1.5px solid rgba(252,128,25,0.3);
+    letter-spacing: 0.5px;
+  }
+  .nav-cta {
+    background: var(--swiggy-orange);
+    color: var(--swiggy-white);
+    border: none; border-radius: 8px;
+    padding: 10px 22px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 800;
+    cursor: pointer; letter-spacing: 0.3px;
+    transition: background 0.18s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--swiggy-orange-d); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    padding-top: 64px;
+    background: var(--swiggy-white);
+    display: flex; justify-content: center;
+    border-bottom: 1px solid var(--swiggy-border);
+  }
+  .hero-inner {
+    max-width: 1100px; width: 100%;
+    padding: 64px 32px 56px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 56px; align-items: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--swiggy-orange-l);
+    border: 1px solid rgba(252,128,25,0.25);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px; font-weight: 800;
+    color: var(--swiggy-orange);
+    letter-spacing: 1.2px; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .blink { width: 7px; height: 7px; border-radius: 50%; background: var(--swiggy-orange); animation: blink 1.6s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hero h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(34px, 3.8vw, 54px);
+    font-weight: 900;
+    line-height: 1.07; letter-spacing: -1.5px;
+    color: var(--swiggy-dark);
+    margin-bottom: 18px;
+  }
+  .hero h1 em { font-style: normal; color: var(--swiggy-orange); }
+  .hero-sub {
+    font-size: 16px; color: var(--swiggy-grey);
+    line-height: 1.75; max-width: 430px; margin-bottom: 32px;
+    font-weight: 400;
+  }
+  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--swiggy-orange); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 14px 30px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px; font-weight: 800;
+    cursor: pointer; letter-spacing: 0.2px;
+    transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+    box-shadow: 0 4px 16px rgba(252,128,25,0.3);
+  }
+  .btn-primary:hover { background: var(--swiggy-orange-d); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(252,128,25,0.35); }
+  .btn-outline {
+    background: transparent; color: var(--swiggy-orange);
+    border: 2px solid var(--swiggy-orange);
+    border-radius: 8px; padding: 12px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 800;
+    cursor: pointer; transition: all 0.18s;
+  }
+  .btn-outline:hover { background: var(--swiggy-orange-l); }
+
+  /* Hero Visual */
+  .hero-visual { display: flex; justify-content: center; align-items: center; position: relative; min-height: 340px; }
+  .hero-card-main {
+    width: 280px; height: 280px;
+    background: var(--swiggy-orange);
+    border-radius: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 110px;
+    box-shadow: 0 24px 60px rgba(252,128,25,0.25);
+    animation: floatY 4s ease-in-out infinite;
+    position: relative; z-index: 2;
+  }
+  @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  .chip {
+    position: absolute;
+    background: var(--swiggy-white);
+    border: 1px solid var(--swiggy-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px; font-weight: 700;
+    color: var(--swiggy-dark);
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .chip-icon { font-size: 16px; }
+  .chip-sub { font-size: 10px; color: var(--swiggy-grey-l); font-weight: 600; display:block; }
+  .chip1 { top: 24px; left: -8px; animation: floatY 4s ease-in-out infinite 0.4s; }
+  .chip2 { bottom: 48px; left: -16px; animation: floatY 4s ease-in-out infinite 0.9s; }
+  .chip3 { top: 56px; right: -16px; animation: floatY 4s ease-in-out infinite 1.4s; }
+  .chip4 { bottom: 20px; right: -8px; animation: floatY 4s ease-in-out infinite 1.9s; }
+
+  /* ── STATS BAR ── */
+  .stats-wrap { background: var(--swiggy-dark); display: flex; justify-content: center; }
+  .stats-inner {
+    max-width: 1100px; width: 100%;
+    display: grid; grid-template-columns: repeat(4,1fr);
+    padding: 32px;
+  }
+  .stat-item { text-align: center; padding: 0 12px; border-right: 1px solid rgba(255,255,255,0.08); }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Nunito', sans-serif;
+    font-size: 34px; font-weight: 900;
+    color: var(--swiggy-orange); letter-spacing: -1px;
+  }
+  .stat-lbl { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 3px; font-weight: 500; }
+
+  /* ── SECTION SHELL ── */
+  .sec { display: flex; justify-content: center; }
+  .sec.bg-grey { background: var(--swiggy-bg); }
+  .sec.bg-dark  { background: var(--swiggy-dark); }
+  .sec.bg-orange { background: var(--swiggy-orange); }
+  .sec-inner { max-width: 1100px; width: 100%; padding: 72px 32px; }
+
+  .sec-eyebrow {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px; font-weight: 800;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--swiggy-orange); margin-bottom: 8px;
+  }
+  .sec-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(26px, 2.8vw, 40px);
+    font-weight: 900; letter-spacing: -1px;
+    color: var(--swiggy-dark); line-height: 1.1; margin-bottom: 12px;
+  }
+  .sec-sub { font-size: 15px; color: var(--swiggy-grey); line-height: 1.75; max-width: 480px; }
+
+  /* ── USE CASES ── */
+  .uc-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 16px; margin-top: 44px;
+  }
+  .uc-card {
+    background: var(--swiggy-white);
+    border: 1px solid var(--swiggy-border);
+    border-radius: 16px; padding: 26px 22px;
+    transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+  }
+  .uc-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: var(--swiggy-orange); }
+  .uc-card.hot { background: var(--swiggy-orange); border-color: var(--swiggy-orange); }
+  .uc-emoji { font-size: 36px; margin-bottom: 14px; display: block; }
+  .uc-title { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; color: var(--swiggy-dark); margin-bottom: 8px; letter-spacing: -0.3px; }
+  .uc-card.hot .uc-title { color: #fff; }
+  .uc-desc { font-size: 12.5px; line-height: 1.7; color: var(--swiggy-grey); }
+  .uc-card.hot .uc-desc { color: rgba(255,255,255,0.82); }
+  .uc-badge {
+    margin-top: 16px; display: inline-block;
+    background: var(--swiggy-orange-l); color: var(--swiggy-orange);
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 4px;
+  }
+  .uc-card.hot .uc-badge { background: rgba(255,255,255,0.2); color: #fff; }
+
+  /* ── HOW IT WORKS ── */
+  .steps-row {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 0; margin-top: 56px; position: relative;
+  }
+  .steps-row::before {
+    content: '';
+    position: absolute; top: 32px; left: 12.5%; right: 12.5%;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--swiggy-orange) 0, var(--swiggy-orange) 6px, transparent 6px, transparent 14px);
+  }
+  .step { text-align: center; padding: 0 16px; position: relative; z-index: 1; }
+  .step-bubble {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--swiggy-orange);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin: 0 auto 20px;
+    box-shadow: 0 6px 20px rgba(252,128,25,0.28);
+    position: relative;
+  }
+  .step-n {
+    position: absolute; top: -4px; right: -4px;
+    background: var(--swiggy-dark); color: #fff;
+    width: 18px; height: 18px; border-radius: 50%;
+    font-family: 'Nunito', sans-serif;
+    font-size: 9px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-title { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; color: var(--swiggy-dark); margin-bottom: 6px; }
+  .step-desc { font-size: 12px; color: var(--swiggy-grey); line-height: 1.65; }
+
+  /* ── FEATURES ── */
+  .feat-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px; margin-top: 44px;
+  }
+  .feat-card {
+    background: var(--swiggy-white);
+    border: 1px solid var(--swiggy-border);
+    border-radius: 14px; padding: 22px 20px;
+    display: flex; gap: 16px; align-items: flex-start;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .feat-card:hover { border-color: var(--swiggy-orange); box-shadow: 0 6px 20px rgba(252,128,25,0.1); }
+  .feat-icon {
+    width: 46px; height: 46px; flex-shrink: 0;
+    background: var(--swiggy-orange-l);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .feat-title { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; color: var(--swiggy-dark); margin-bottom: 4px; letter-spacing: -0.2px; }
+  .feat-desc { font-size: 12px; color: var(--swiggy-grey); line-height: 1.65; }
+
+  /* ── PRICING ── */
+  .price-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 16px; margin-top: 44px;
+  }
+  .price-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 26px 22px;
+    transition: transform 0.2s;
+  }
+  .price-card:hover { transform: translateY(-4px); }
+  .price-card.hot { background: var(--swiggy-orange); border-color: var(--swiggy-orange); }
+  .p-eyebrow { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; font-weight: 700; }
+  .price-card.hot .p-eyebrow { color: rgba(255,255,255,0.85); }
+  .p-name { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+  .p-range { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; color: #fff; }
+  .p-sub { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 20px; }
+  .p-list { list-style: none; }
+  .p-list li { font-size: 12px; color: rgba(255,255,255,0.65); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; gap: 8px; }
+  .price-card.hot .p-list li { color: rgba(255,255,255,0.92); border-color: rgba(255,255,255,0.15); }
+  .ck { color: var(--swiggy-green); font-size: 14px; font-weight: 900; }
+
+  /* ── TESTIMONIALS ── */
+  .testi-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 16px; margin-top: 44px;
+  }
+  .testi-card {
+    background: var(--swiggy-white);
+    border: 1px solid var(--swiggy-border);
+    border-radius: 16px; padding: 24px 20px;
+  }
+  .t-stars { color: var(--swiggy-orange); font-size: 13px; letter-spacing: 2px; margin-bottom: 12px; }
+  .t-text { font-size: 13px; color: var(--swiggy-grey); line-height: 1.72; margin-bottom: 18px; font-style: italic; }
+  .t-author { display: flex; align-items: center; gap: 10px; }
+  .t-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--swiggy-orange-l);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+  }
+  .t-name { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; color: var(--swiggy-dark); }
+  .t-role { font-size: 11px; color: var(--swiggy-grey-l); }
+
+  /* ── CTA ── */
+  .cta-inner { max-width: 660px; margin: 0 auto; text-align: center; padding: 72px 32px; }
+  .cta-inner h2 { font-family: 'Nunito', sans-serif; font-size: clamp(28px, 3.2vw, 48px); font-weight: 900; color: #fff; letter-spacing: -1px; margin-bottom: 12px; }
+  .cta-inner p { font-size: 15px; color: rgba(255,255,255,0.82); margin-bottom: 28px; line-height: 1.7; }
+  .btn-white {
+    background: #fff; color: var(--swiggy-orange);
+    border: none; border-radius: 8px;
+    padding: 14px 40px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px; font-weight: 900;
+    cursor: pointer; letter-spacing: 0.2px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .btn-white:hover { transform: scale(1.04); box-shadow: 0 10px 30px rgba(0,0,0,0.18); }
+
+  /* ── FOOTER ── */
+  footer { background: var(--swiggy-dark); display: flex; justify-content: center; }
+  .foot-inner {
+    max-width: 1100px; width: 100%; padding: 24px 32px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .foot-logo { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 900; color: var(--swiggy-orange); }
+  .foot-note { font-size: 11px; color: rgba(255,255,255,0.25); }
+
+  /* ── SCROLL FX ── */
+  .fade-in { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="nav-logo">Swiggy</div>
+      <div class="nav-pill">BULK ORDERS</div>
+    </div>
+    <button class="nav-cta" onclick="document.getElementById('feat').scrollIntoView({behavior:'smooth'})">Order in Bulk →</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow"><span class="blink"></span> New Feature</div>
+      <h1>Feed the<br><em>whole crowd,</em><br>effortlessly.</h1>
+      <p class="hero-sub">Swiggy Bulk Orders is here — order food for 10 to 500+ people in just a few taps. Perfect for office parties, family gatherings, weddings, and more.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="document.getElementById('usecases').scrollIntoView({behavior:'smooth'})">Explore Use Cases</button>
+        <button class="btn-outline" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How it works ↓</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card-main">🍽️</div>
+      <div class="chip chip1"><span class="chip-icon">🎉</span><div><span>Party Mode</span><span class="chip-sub">Active</span></div></div>
+      <div class="chip chip2"><span class="chip-icon">🚀</span><div><span>45 min delivery</span><span class="chip-sub">Bulk orders</span></div></div>
+      <div class="chip chip3"><span class="chip-icon">👥</span><div><span>Feeds 500+</span><span class="chip-sub">Per order</span></div></div>
+      <div class="chip chip4"><span class="chip-icon">📅</span><div><span>Pre-scheduled</span><span class="chip-sub">Up to 72 hrs</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-wrap">
+  <div class="stats-inner">
+    <div class="stat-item fade-in"><div class="stat-num">500+</div><div class="stat-lbl">Servings per order</div></div>
+    <div class="stat-item fade-in"><div class="stat-num">45 min</div><div class="stat-lbl">Bulk delivery time</div></div>
+    <div class="stat-item fade-in"><div class="stat-num">30%</div><div class="stat-lbl">Bulk discount savings</div></div>
+    <div class="stat-item fade-in"><div class="stat-num">1000+</div><div class="stat-lbl">Partner restaurants</div></div>
+  </div>
+</div>
+
+<!-- USE CASES -->
+<div class="sec bg-grey" id="usecases">
+  <div class="sec-inner">
+    <p class="sec-eyebrow">Use Cases</p>
+    <h2 class="sec-title">Every occasion,<br>perfectly fed.</h2>
+    <p class="sec-sub">Whether it's a cozy family dinner or a 300-person corporate event, Swiggy Bulk Orders scales with you.</p>
+    <div class="uc-grid">
+      <div class="uc-card fade-in"><span class="uc-emoji">🏢</span><div class="uc-title">Office Parties & Meetings</div><div class="uc-desc">Schedule recurring lunch orders for all-hands meetings, team offsites, or Friday celebrations without any hassle.</div><span class="uc-badge">Corporate</span></div>
+      <div class="uc-card hot fade-in"><span class="uc-emoji">🎂</span><div class="uc-title">Birthdays & Celebrations</div><div class="uc-desc">Make your milestone moments extra special. Let Swiggy handle the food while you enjoy the party.</div><span class="uc-badge">★ Most Popular</span></div>
+      <div class="uc-card fade-in"><span class="uc-emoji">💒</span><div class="uc-title">Weddings & Receptions</div><div class="uc-desc">Complement your catering or handle the food operation for nikkahs, ring ceremonies, or after-parties with ease.</div><span class="uc-badge">Events</span></div>
+      <div class="uc-card fade-in"><span class="uc-emoji">🏫</span><div class="uc-title">College Events & Fests</div><div class="uc-desc">Farewell parties, cultural fests, or sports days — order for 50 to 5000 students without multiple vendors.</div><span class="uc-badge">Campus</span></div>
+      <div class="uc-card fade-in"><span class="uc-emoji">🙏</span><div class="uc-title">Pujas & Religious Events</div><div class="uc-desc">Prasad, langar-style meals, or post-puja feasts — home-style cooking in bulk from trusted local restaurants.</div><span class="uc-badge">Community</span></div>
+      <div class="uc-card fade-in"><span class="uc-emoji">🤝</span><div class="uc-title">NGO & Charity Drives</div><div class="uc-desc">Organise food distribution events at scale. Swiggy for Good pricing on verified charity orders.</div><span class="uc-badge">Social Impact</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="sec" id="how">
+  <div class="sec-inner">
+    <p class="sec-eyebrow">How It Works</p>
+    <h2 class="sec-title">Order for 10 or 500.<br>Same 4 steps.</h2>
+    <p class="sec-sub">Bulk ordering on Swiggy is ridiculously simple — no calls, no negotiations, no chaos.</p>
+    <div class="steps-row">
+      <div class="step fade-in"><div class="step-bubble"><span>🍕</span><div class="step-n">1</div></div><div class="step-title">Pick a Restaurant</div><div class="step-desc">Browse bulk-capable restaurants filtered by cuisine, order size, and delivery time.</div></div>
+      <div class="step fade-in"><div class="step-bubble"><span>🛒</span><div class="step-n">2</div></div><div class="step-title">Select Your Menu</div><div class="step-desc">Smart quantity selectors. See per-head cost update live as you build your order.</div></div>
+      <div class="step fade-in"><div class="step-bubble"><span>📅</span><div class="step-n">3</div></div><div class="step-title">Schedule Delivery</div><div class="step-desc">Order now or pre-schedule up to 72 hours in advance. Choose your exact window.</div></div>
+      <div class="step fade-in"><div class="step-bubble"><span>🎉</span><div class="step-n">4</div></div><div class="step-title">Enjoy the Feast!</div><div class="step-desc">Track live. Food arrives in temperature-controlled packaging, right on time.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="sec bg-grey" id="feat">
+  <div class="sec-inner">
+    <p class="sec-eyebrow">What's New</p>
+    <h2 class="sec-title">Built for big appetites.</h2>
+    <p class="sec-sub">Swiggy Bulk Orders isn't just a bigger cart. We rebuilt the experience from scratch for group ordering.</p>
+    <div class="feat-grid">
+      <div class="feat-card fade-in"><div class="feat-icon">📊</div><div><div class="feat-title">Live Per-Head Cost Calculator</div><div class="feat-desc">See per-person cost update in real time as you add dishes. Budget planning made effortless for event organisers.</div></div></div>
+      <div class="feat-card fade-in"><div class="feat-icon">🌡️</div><div><div class="feat-title">Temperature-Safe Packaging</div><div class="feat-desc">Insulated, stackable trays that keep hot food hot and cold food cold — for up to 90 minutes post-delivery.</div></div></div>
+      <div class="feat-card fade-in"><div class="feat-icon">🤖</div><div><div class="feat-title">AI Menu Suggestions</div><div class="feat-desc">Tell us your crowd size and vibe — our AI recommends ideal portions, combos, and handles dietary needs.</div></div></div>
+      <div class="feat-card fade-in"><div class="feat-icon">🗓️</div><div><div class="feat-title">Advance Scheduling (72 hrs)</div><div class="feat-desc">Pre-order up to 3 days ahead. Repeat your order weekly with one tap for recurring office meals.</div></div></div>
+      <div class="feat-card fade-in"><div class="feat-icon">💳</div><div><div class="feat-title">Corporate Invoice & GST Billing</div><div class="feat-desc">Proper GST invoices for every bulk order. Zoho, QuickBooks, and SAP integrations coming soon.</div></div></div>
+      <div class="feat-card fade-in"><div class="feat-icon">🏷️</div><div><div class="feat-title">Guaranteed Bulk Discounts</div><div class="feat-desc">Orders over ₹5,000 auto-unlock tiered discounts up to 30% off. No coupon codes — savings at checkout.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="sec bg-dark">
+  <div class="sec-inner">
+    <p class="sec-eyebrow" style="color:var(--swiggy-orange)">Pricing Tiers</p>
+    <h2 class="sec-title" style="color:#fff">Bigger order, bigger savings.</h2>
+    <p class="sec-sub" style="color:rgba(255,255,255,0.45)">Transparent bulk discounts — no minimum commitments, no hidden fees.</p>
+    <div class="price-grid">
+      <div class="price-card fade-in"><div class="p-eyebrow">Starter</div><div class="p-name">Small Gathering</div><div class="p-range">10–30</div><div class="p-sub">people · up to 5% off</div><ul class="p-list"><li><span class="ck">✓</span> Standard delivery time</li><li><span class="ck">✓</span> All cuisines</li><li><span class="ck">✓</span> Per-head calculator</li><li><span class="ck">✓</span> Digital invoice</li></ul></div>
+      <div class="price-card hot fade-in"><div class="p-eyebrow">Most Popular ★</div><div class="p-name">Party Pack</div><div class="p-range">31–100</div><div class="p-sub">people · up to 20% off</div><ul class="p-list"><li><span class="ck">✓</span> Priority kitchen slot</li><li><span class="ck">✓</span> Insulated tray packaging</li><li><span class="ck">✓</span> 72-hr scheduling</li><li><span class="ck">✓</span> GST invoice & split billing</li><li><span class="ck">✓</span> Dedicated support line</li></ul></div>
+      <div class="price-card fade-in"><div class="p-eyebrow">Enterprise</div><div class="p-name">Mega Event</div><div class="p-range">100+</div><div class="p-sub">people · up to 30% off</div><ul class="p-list"><li><span class="ck">✓</span> Dedicated event manager</li><li><span class="ck">✓</span> Multi-restaurant ordering</li><li><span class="ck">✓</span> Custom dietary menus</li><li><span class="ck">✓</span> Live tracking dashboard</li><li><span class="ck">✓</span> Corporate account & net-30</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="sec">
+  <div class="sec-inner">
+    <p class="sec-eyebrow">Loved By</p>
+    <h2 class="sec-title">Real parties. Real reviews.</h2>
+    <div class="testi-grid">
+      <div class="testi-card fade-in"><div class="t-stars">★★★★★</div><div class="t-text">"Ordered for our 80-person office Diwali party. Everything arrived piping hot and on time. The insulated packaging was a game-changer. Will repeat every year!"</div><div class="t-author"><div class="t-avatar">👩‍💼</div><div><div class="t-name">Priya Mehta</div><div class="t-role">HR Lead, Bangalore</div></div></div></div>
+      <div class="testi-card fade-in"><div class="t-stars">★★★★★</div><div class="t-text">"Swiggy's AI recommended the perfect menu for my daughter's 100-person birthday. Saved me 3 hours of planning and 25% off vs ordering item by item!"</div><div class="t-author"><div class="t-avatar">👨</div><div><div class="t-name">Rajesh Iyer</div><div class="t-role">Homemaker, Chennai</div></div></div></div>
+      <div class="testi-card fade-in"><div class="t-stars">★★★★★</div><div class="t-text">"Weekly all-hands lunches for 150 people. The repeat order feature means I set it once on Monday and forget about it all week. Absolutely brilliant."</div><div class="t-author"><div class="t-avatar">👩</div><div><div class="t-name">Ananya Sharma</div><div class="t-role">Office Manager, Mumbai</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="sec bg-orange">
+  <div class="cta-inner">
+    <h2>Your crowd is hungry.<br>Let's fix that.</h2>
+    <p>Start your first bulk order today. Takes less than 5 minutes and delivers happiness to everyone at the table.</p>
+    <button class="btn-white">Place a Bulk Order Now →</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-logo">Swiggy</div>
+    <div class="foot-note">© 2025 Bundl Technologies Pvt. Ltd. · Swiggy Bulk Orders · T&C apply.</div>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
